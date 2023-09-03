@@ -277,16 +277,23 @@ export const addToCart = async(req: Request,res: Response, next: NextFunction) =
      cartItems = profile.cart;
      
      if(cartItems.length > 0){
-        // console.log('i am here')
-        cartItems = cartItems.filter(item => {
-           return item.food.toString() !== _id.toString()
-        })
-
-        cartItems.push({food,units});
-     }
-     else{
-        // console.log('i am 2here')
         
+        let existingItems = cartItems.find(item => {
+           return item.food.toString() === _id.toString();
+        })
+        if(units > 0){
+            cartItems = cartItems.filter(item => {
+                return item.food.toString() !== _id.toString();
+             })
+             cartItems.push({food,units});
+        }
+        else{
+            cartItems = cartItems.filter(item => {
+                return item.food.toString() !== _id.toString()
+             })
+        }
+     }
+     else{        
         cartItems.push({food,units})
      }
     //  console.log(cartItems);
