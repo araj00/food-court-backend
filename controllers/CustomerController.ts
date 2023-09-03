@@ -263,6 +263,53 @@ export const getCart = async(req: Request,res: Response, next: NextFunction) => 
 
 export const addToCart = async(req: Request,res: Response, next: NextFunction) => {
     const customer = req.user;
+
+    if(customer){
+     const profile = await Customer.findById(customer._id);
+     let cartItems = Array();
+
+     const {_id,units} = <OrderInputs>req.body;
+     const food = await Food.findById(_id);
+     
+     if(profile != null){
+
+        // check for cart items
+     cartItems = profile.cart;
+     
+     if(cartItems.length > 0){
+        // console.log('i am here')
+        cartItems = cartItems.filter(item => {
+           return item.food.toString() !== _id.toString()
+        })
+
+        cartItems.push({food,units});
+     }
+     else{
+        // console.log('i am 2here')
+        
+        cartItems.push({food,units})
+     }
+    //  console.log(cartItems);
+    //  console.log(...cartItems);
+     
+     profile.cart = [...cartItems] as [any]
+     await profile.save();
+     return res.status(200).json({
+        message : 'food items added to cart',
+        success: true
+    })
+     }
+     else{
+        return res.status(404).json(
+            {
+                message: 'profile not found'
+            }
+        )
+     }
+    }
+    else{
+        return res.status(400).json({message : 'Unable to create cart'})
+    }
 }
 
 export const createOrder = async(req:Request,res : Response,next : NextFunction) => {

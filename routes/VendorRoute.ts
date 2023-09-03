@@ -1,5 +1,5 @@
 import express, {Request,Response,NextFunction} from 'express';
-import {  AddFood, GetFoods, GetVendorProfile, UpdateVendorProfile, VendorLogin } from '../controllers/index';
+import {  AddFood, GetFoods, GetVendorProfile, UpdateVendorProfile, UpdateVendorService, VendorLogin } from '../controllers/index';
 import { Authenticate } from '../middleware';
 
 import multer from 'multer'
@@ -23,7 +23,7 @@ router.post('/login',VendorLogin)
 router.use(Authenticate)
 router.get('/profile',GetVendorProfile)
 router.put('/profile',UpdateVendorProfile)
-router.put('/service',UpdateVendorProfile)
+router.put('/service',UpdateVendorService)
 router.post('/food',uploadStorage,AddFood)
 router.get('/foods',GetFoods)
 

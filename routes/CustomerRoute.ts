@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CustomerLogin, CustomerSignUp, CustomerVerify, EditCustomerProfile, GetCustomerProfile, RequestOtp, createOrder, getOrderById, getOrders } from "../controllers";
+import { CustomerLogin, CustomerSignUp, CustomerVerify, EditCustomerProfile, GetCustomerProfile, RequestOtp, addToCart, createOrder, getOrderById, getOrders } from "../controllers";
 import { Authenticate } from "../middleware";
 
 const router = Router()
@@ -25,7 +25,7 @@ router.patch('/profile',EditCustomerProfile)
 
 // **--------------------- cart -----------------------------**/
 
-router.post('/cart');
+router.post('/cart',addToCart);
 router.get('/cart');
 router.delete('/cart')
 // **--------------------- Order ----------------------------**/

@@ -43,11 +43,11 @@ const CustomerSchema = new Schema(
                 food : { 
                     type : mongoose.Schema.Types.ObjectId,
                     ref : 'Food',
-                    require : true
+                    required : true
                 },
-                unit : {
+                units: {
                     type : Number,
-                    require : true
+                    required : true
                 }
             }
         ]
