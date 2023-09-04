@@ -44,7 +44,7 @@ const OrderSchema = new Schema(
         paymentResponse : String,
         orderStatus : String,
         readyTime:{type: Number},
-        remarks:{type: Number},
+        remarks:{type: String},
     },{
         toJSON:{
             transform(doc,ret){

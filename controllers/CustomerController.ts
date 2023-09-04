@@ -8,6 +8,8 @@ import { Customer } from '../models/Customer'
 import { GenerateOtp, GeneratePassword, GenerateSalt, GenerateSignature, ValidatePassword, onRequestOTP } from '../utility'
 import { Food } from '../models'
 import { Order } from '../models/Order'
+import { Transaction } from '../models/Transaction'
+import { Offer } from '../models/Offer'
  
 export const CustomerSignUp = async(req : Request,res : Response,next : NextFunction) => {
     
@@ -455,5 +457,62 @@ export const getOrderById = async(req : Request,res : Response,next : NextFuncti
         message : 'error with orderId',
         success : false
     })
+
+}
+
+export const VerifyOffer = async (req: Request, res: Response, next: NextFunction) => {
+
+    const offerId = req.params.id;
+    const customer = req.user;
+    
+    if(customer){
+
+        const appliedOffer = await Offer.findById(offerId);
+        
+        if(appliedOffer){
+            if(appliedOffer.isActive){
+                return res.status(200).json({ message: 'Offer is Valid', offer: appliedOffer});
+            }
+        }
+
+    }
+
+    return res.status(400).json({ msg: 'Offer is Not Valid'});
+}
+
+
+export const CreatePayment = async (req: Request, res: Response, next: NextFunction) => {
+
+    const customer = req.user;
+
+    const { amount, paymentMode, offerId} = req.body;
+
+    let payableAmount = Number(amount);
+
+    if(offerId){
+
+        const appliedOffer = await Offer.findById(offerId);
+
+        if(appliedOffer?.isActive){
+            payableAmount = (payableAmount - appliedOffer.offerAmount);
+        }
+    }
+    // perform payment gateway charge api
+
+    // create record on transaction
+    const transaction = await Transaction.create({
+        customer: customer?._id,
+        vendorId: '',
+        orderId: '',
+        orderValue: payableAmount,
+        offerUsed: offerId || 'NA',
+        status: 'OPEN',
+        paymentMode: paymentMode,
+        paymentResponse: 'Payment is cash on Delivery'
+    })
+
+
+    //return transaction
+    return res.status(200).json(transaction);
 
 }
