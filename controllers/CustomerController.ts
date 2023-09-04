@@ -258,6 +258,31 @@ export const EditCustomerProfile = async(req : Request,res : Response,next : Nex
 
 export const getCart = async(req: Request,res: Response, next: NextFunction) => {
 
+    const customer = req.user;
+    if(customer){
+        const profile = await Customer.findById(customer._id).populate('cart.food');
+
+        if(profile != null){
+          const cartFoods = profile.cart
+          return res.status(200).json(
+            {
+                message : 'foods in your cart fetched successfully',
+                data : cartFoods
+            }
+          )
+        }
+        else{
+            return res.status(404).json(
+                {
+                    message: 'profile not found'
+                }
+            )
+         }
+    }
+    else{
+        return res.status(404).json({message : 'customer not found'})
+    }
+
 
 }
 
@@ -286,11 +311,15 @@ export const addToCart = async(req: Request,res: Response, next: NextFunction) =
                 return item.food.toString() !== _id.toString();
              })
              cartItems.push({food,units});
+
         }
         else{
             cartItems = cartItems.filter(item => {
                 return item.food.toString() !== _id.toString()
              })
+             profile.cart = [...cartItems] as [any]
+             await profile.save();
+             return res.status(200).json({})
         }
      }
      else{        
